@@ -88,10 +88,9 @@ public sealed class PlatformInfo
         $"{RuntimeInformation.OSDescription} / process={RuntimeInformation.ProcessArchitecture} / os={RuntimeInformation.OSArchitecture}";
 
     public static string Latitude7455Note =>
-        "Latitude 7455 (Snapdragon / Windows on ARM): Qualcomm Smart Charging is on by default " +
-        "(heart icon near 100% = reduced max charge voltage). " +
-        "Dell documents PrimaryBattChargeCfg (custom start/stop %) as not compatible with ARM64. " +
-        "Dell Optimizer on this SKU often shows only battery status + Thermal Management — not Primarily AC.";
+        "Latitude 7455 (Snapdragon / Windows on ARM): OEM Smart Charging may show a heart near 100% (voltage care). " +
+        "Microsoft documents Smart charging as OEM firmware — no universal Windows 80% hard-limit API. " +
+        "Dell PrimaryBattChargeCfg custom % is incompatible with ARM64. Use this app’s soft cap for controllable ~80% care.";
 
     public static string BuildPlatformNote()
     {
@@ -109,21 +108,14 @@ public sealed class PlatformInfo
     {
         if (writableBackend)
         {
-            return "A writable Dell charge-mode attribute was found. Use Set 80% limit " +
-                   "(Custom if exposed; otherwise Primarily AC / Adaptive).";
+            return "A writable Dell charge-mode attribute was found (unusual on ARM64). Soft cap remains available.";
         }
 
         return
-            "What to do on Latitude 7455 (honest path):\n" +
-            "1. Dell Optimizer → Power & Battery on this ARM SKU typically shows battery details + Thermal Management only. " +
-            "If you do not see Dynamic Charge / Charging Mode / Primarily AC, that control is not offered in Optimizer for this device — " +
-            "do not keep hunting for it on that page.\n" +
-            "2. Check BIOS: restart → mash F2 → look under Power / Battery Configuration " +
-            "(ExpressCharge is documented for this model; Adaptive / Primarily AC / Standard may appear depending on BIOS). " +
-            "Primarily AC / Adaptive + Smart Charging is what Dell documents as the ~80% docked suspend behavior on other platforms.\n" +
-            "3. If BIOS has no charge-mode list either, rely on Qualcomm Smart Charging (default) for battery health — " +
-            "it is not a user 80% slider; a fixed Custom 75–80% window is unsupported on ARM64 per Dell.\n" +
-            "4. Optional: Dell Command | Monitor ARM64 is already useful for probing. Custom % via WMI/cctk stays unsupported on ARM64.\n" +
-            "5. For a full charge before travel: BIOS Battery Configuration → Standard or ExpressCharge when those entries exist.";
+            "Pure-software path on Latitude 7455:\n" +
+            "1. Enable Soft cap → target 80% / rearm 75% → action Notify (or Sleep/Hibernate) → Save & start.\n" +
+            "2. Leave the app running (or set it to start with Windows) so the monitor can act on AC.\n" +
+            "3. OEM Smart Charging (taskbar heart) is firmware-driven — not a user 80% slider you can force via powercfg.\n" +
+            "4. BIOS Power → Battery Configuration may list ExpressCharge/etc.; Custom 75–80% remains unsupported on ARM64.";
     }
 }
