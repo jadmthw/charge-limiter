@@ -1,0 +1,11 @@
+# Charge Limiter
+
+bin/
+obj/
+.vs/
+*.user
+publish/
+*.log
+.DS_Store
+**/TestResults/
+agent-tools/
