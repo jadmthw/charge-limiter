@@ -82,8 +82,8 @@ public sealed class ChargeLimitOrchestrator : IChargeLimitOrchestrator
         {
             error = PlatformInfo.IsWindows
                 ? "Neither Dell Command | Monitor (WMI) nor Dell Command | Configure (cctk) is installed. " +
-                  "On Latitude 7455 ARM64, custom 75–80% BIOS thresholds are not supported anyway — " +
-                  "use Dell Optimizer → Primarily AC (see Next steps)."
+                  "On Latitude 7455 ARM64, custom 75–80% BIOS thresholds are not supported via software APIs — " +
+                  "see Next steps (BIOS Battery Configuration / Smart Charging)."
                 : "Charge Limiter must run on Windows for real Dell backends. Use --demo to exercise the UI here.";
         }
 
@@ -115,7 +115,7 @@ public sealed class ChargeLimitOrchestrator : IChargeLimitOrchestrator
                 return result;
             }
 
-            failures.Add(($"{backend.Name}: {result.Message}"));
+            failures.Add($"{backend.Name}: {result.Message}");
         }
 
         if (failures.Count == 0)
@@ -147,13 +147,13 @@ public sealed class ChargeLimitOrchestrator : IChargeLimitOrchestrator
                 return result;
             }
 
-            failures.Add(($"{backend.Name}: {result.Message}"));
+            failures.Add($"{backend.Name}: {result.Message}");
         }
 
         if (failures.Count == 0)
         {
             return OperationResult.Fail(
-                "No Dell backend is installed. In Dell Optimizer choose Standard or ExpressCharge to fill to 100%.");
+                "No Dell backend is installed. For a full charge, use BIOS Power → Battery Configuration → Standard or ExpressCharge when available.");
         }
 
         return OperationResult.Fail("Could not restore full charge.\n\n" + string.Join("\n", failures));

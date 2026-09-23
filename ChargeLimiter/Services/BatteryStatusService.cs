@@ -88,9 +88,10 @@ public sealed class PlatformInfo
         $"{RuntimeInformation.OSDescription} / process={RuntimeInformation.ProcessArchitecture} / os={RuntimeInformation.OSArchitecture}";
 
     public static string Latitude7455Note =>
-        "Latitude 7455 (Snapdragon / Windows on ARM): Dell Smart Charging is on by default. " +
+        "Latitude 7455 (Snapdragon / Windows on ARM): Qualcomm Smart Charging is on by default " +
+        "(heart icon near 100% = reduced max charge voltage). " +
         "Dell documents PrimaryBattChargeCfg (custom start/stop %) as not compatible with ARM64. " +
-        "A hard user-settable 75–80% Custom window is generally not available on this model.";
+        "Dell Optimizer on this SKU often shows only battery status + Thermal Management — not Primarily AC.";
 
     public static string BuildPlatformNote()
     {
@@ -108,19 +109,21 @@ public sealed class PlatformInfo
     {
         if (writableBackend)
         {
-            return "Writable Dell backend detected. Use Set 80% limit (Custom if available, otherwise Primarily AC / Adaptive).";
+            return "A writable Dell charge-mode attribute was found. Use Set 80% limit " +
+                   "(Custom if exposed; otherwise Primarily AC / Adaptive).";
         }
 
         return
-            "What to do on Latitude 7455 (best practical ~80% stop):\n" +
-            "1. Open Dell Optimizer (included on Latitude) → Power & Battery.\n" +
-            "2. If Dynamic Charge Policy is on, turn it off so Charging Mode unlocks.\n" +
-            "3. Choose Primarily AC — Dell lowers the charge threshold so the pack does not sit at 100% " +
-            "(with Smart Charging this commonly suspends around ~80% while docked).\n" +
-            "4. Adaptive / Dynamic Charge is Dell’s recommended “set and forget” health mode (not a fixed 80%).\n" +
-            "5. Optional: install Dell Command | Monitor ARM64 for Latitude 7455, reboot, re-run this app elevated — " +
-            "if a charge-mode attribute appears, Set 80% can switch Primarily AC via WMI. " +
-            "Custom 75–80% via cctk/WMI remains unsupported on ARM64 per Dell.\n" +
-            "6. For travel/full charge: Optimizer → Standard or ExpressCharge (or BIOS equivalent).";
+            "What to do on Latitude 7455 (honest path):\n" +
+            "1. Dell Optimizer → Power & Battery on this ARM SKU typically shows battery details + Thermal Management only. " +
+            "If you do not see Dynamic Charge / Charging Mode / Primarily AC, that control is not offered in Optimizer for this device — " +
+            "do not keep hunting for it on that page.\n" +
+            "2. Check BIOS: restart → mash F2 → look under Power / Battery Configuration " +
+            "(ExpressCharge is documented for this model; Adaptive / Primarily AC / Standard may appear depending on BIOS). " +
+            "Primarily AC / Adaptive + Smart Charging is what Dell documents as the ~80% docked suspend behavior on other platforms.\n" +
+            "3. If BIOS has no charge-mode list either, rely on Qualcomm Smart Charging (default) for battery health — " +
+            "it is not a user 80% slider; a fixed Custom 75–80% window is unsupported on ARM64 per Dell.\n" +
+            "4. Optional: Dell Command | Monitor ARM64 is already useful for probing. Custom % via WMI/cctk stays unsupported on ARM64.\n" +
+            "5. For a full charge before travel: BIOS Battery Configuration → Standard or ExpressCharge when those entries exist.";
     }
 }

@@ -92,7 +92,7 @@
                 <TextBlock Text="Latitude 7455 reality check"
                            FontWeight="SemiBold"
                            Foreground="#115E59" />
-                <TextBlock Text="Dell does not expose a Custom 75–80% charge window on Snapdragon / ARM64 (PrimaryBattChargeCfg incompatible). Missing WMI/cctk here is expected until you install tools — and even then Custom may stay unavailable."
+                <TextBlock Text="Dell does not expose a Custom 75–80% charge window on Snapdragon / ARM64 (PrimaryBattChargeCfg incompatible). Dell Optimizer on this SKU often shows only battery status + Thermal — Primarily AC may be missing there. Prefer BIOS Power → Battery Configuration if present, otherwise Qualcomm Smart Charging."
                            TextWrapping="Wrap"
                            Foreground="#115E59" />
               </StackPanel>

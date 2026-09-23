@@ -79,7 +79,7 @@ public sealed class DellWmiChargeLimitBackend : IChargeLimitBackend
                             "Dell Command | Monitor WMI is present, but no primary-battery charge attributes were exposed. " +
                             "On Latitude 7455, Dell marks PrimaryBattChargeCfg (custom start/stop) as incompatible with ARM64.",
                         Warning =
-                            "Use Dell Optimizer → Primarily AC for an ~80% docked stop, or rely on Qualcomm Smart Charging."
+                            "Use BIOS Power → Battery Configuration if present, or rely on Qualcomm Smart Charging."
                     };
                 }
 
@@ -161,8 +161,7 @@ public sealed class DellWmiChargeLimitBackend : IChargeLimitBackend
                 {
                     return OperationResult.Fail(
                         "No primary battery charge mode attribute over WMI. " +
-                        "On Latitude 7455 use Dell Optimizer → Power & Battery → Primarily AC, " +
-                        "or install Dell Command | Monitor (ARM64) and retry.");
+                        "On Latitude 7455, check BIOS Power → Battery Configuration, or rely on Qualcomm Smart Charging.");
                 }
 
                 foreach (var keyword in new[] { "Primarily AC", "PrimAc", "AC Use", "Adaptive" })
@@ -188,7 +187,7 @@ public sealed class DellWmiChargeLimitBackend : IChargeLimitBackend
 
                 return OperationResult.Fail(
                     "WMI exposes a charge mode attribute but neither Custom nor Primarily AC / Adaptive could be set. " +
-                    "Set Primarily AC in Dell Optimizer or BIOS instead.");
+                    "Check BIOS Power → Battery Configuration, or rely on Qualcomm Smart Charging.");
             }
             catch (Exception ex)
             {

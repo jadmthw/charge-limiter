@@ -103,7 +103,7 @@ public sealed class CctkChargeLimitBackend : IChargeLimitBackend
 
         return OperationResult.Fail(
             "cctk could not set Custom, PrimAcUse, or Adaptive. " +
-            "Dell documents PrimaryBattChargeCfg as incompatible with ARM64 — use Dell Optimizer → Primarily AC on Latitude 7455.");
+            "Dell documents PrimaryBattChargeCfg as incompatible with ARM64 — on Latitude 7455 check BIOS Battery Configuration or Smart Charging.");
     }
 
     public async Task<OperationResult> RestoreFullChargeAsync(CancellationToken cancellationToken = default)
