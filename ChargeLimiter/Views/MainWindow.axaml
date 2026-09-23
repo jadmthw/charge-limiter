@@ -1,0 +1,185 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ChargeLimiter.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="ChargeLimiter.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Width="720"
+        Height="640"
+        MinWidth="560"
+        MinHeight="520"
+        Title="Charge Limiter"
+        Background="#E8EEF2">
+
+  <Window.Styles>
+    <Style Selector="Border.card">
+      <Setter Property="Background" Value="#F7FAFC" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Padding" Value="20" />
+      <Setter Property="BoxShadow" Value="0 8 24 0 #1A0F2A3A" />
+    </Style>
+    <Style Selector="Button.primary">
+      <Setter Property="Background" Value="#0F766E" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="Padding" Value="16,10" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#0D9488" />
+    </Style>
+    <Style Selector="Button.secondary">
+      <Setter Property="Background" Value="#D9E4EC" />
+      <Setter Property="Foreground" Value="#0F172A" />
+      <Setter Property="Padding" Value="16,10" />
+      <Setter Property="CornerRadius" Value="8" />
+    </Style>
+  </Window.Styles>
+
+  <Panel>
+    <Border>
+      <Border.Background>
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Color="#D7E6EF" Offset="0" />
+          <GradientStop Color="#E8EEF2" Offset="0.45" />
+          <GradientStop Color="#CFE8E2" Offset="1" />
+        </LinearGradientBrush>
+      </Border.Background>
+    </Border>
+
+    <ScrollViewer Padding="28">
+      <StackPanel Spacing="18" MaxWidth="680" HorizontalAlignment="Center">
+
+        <StackPanel Spacing="4">
+          <TextBlock Text="Charge Limiter"
+                     FontSize="30"
+                     FontWeight="Bold"
+                     Foreground="#0F172A"
+                     LetterSpacing="-0.4" />
+          <TextBlock Text="Dell Latitude 7455 · target stop ~80%"
+                     FontSize="14"
+                     Foreground="#475569" />
+        </StackPanel>
+
+        <Border IsVisible="{Binding IsLoading}" Classes="card">
+          <StackPanel Spacing="10">
+            <TextBlock Text="{Binding StatusHeadline}" FontSize="18" FontWeight="SemiBold" Foreground="#0F172A" />
+            <TextBlock Text="{Binding StatusDetail}" TextWrapping="Wrap" Foreground="#475569" />
+            <ProgressBar IsIndeterminate="True" Height="4" Foreground="#0F766E" />
+          </StackPanel>
+        </Border>
+
+        <Border IsVisible="{Binding !IsLoading}" Classes="card">
+          <StackPanel Spacing="14">
+            <StackPanel Spacing="6">
+              <TextBlock Text="{Binding StatusHeadline}"
+                         FontSize="20"
+                         FontWeight="SemiBold"
+                         Foreground="#0F172A"
+                         TextWrapping="Wrap" />
+              <TextBlock Text="{Binding StatusDetail}"
+                         TextWrapping="Wrap"
+                         Foreground="#334155" />
+            </StackPanel>
+
+            <Border Background="#E8F5F2"
+                    CornerRadius="8"
+                    Padding="12"
+                    IsVisible="{Binding HasError}">
+              <StackPanel Spacing="8">
+                <TextBlock Text="Latitude 7455 reality check"
+                           FontWeight="SemiBold"
+                           Foreground="#115E59" />
+                <TextBlock Text="Dell does not expose a Custom 75–80% charge window on Snapdragon / ARM64 (PrimaryBattChargeCfg incompatible). Missing WMI/cctk here is expected until you install tools — and even then Custom may stay unavailable."
+                           TextWrapping="Wrap"
+                           Foreground="#115E59" />
+              </StackPanel>
+            </Border>
+
+            <Border Background="#FFF7ED"
+                    CornerRadius="8"
+                    Padding="12"
+                    IsVisible="{Binding !IsLoading}">
+              <StackPanel Spacing="6">
+                <TextBlock Text="Next steps on this laptop"
+                           FontWeight="SemiBold"
+                           Foreground="#9A3412" />
+                <TextBlock Text="{Binding NextSteps}"
+                           TextWrapping="Wrap"
+                           Foreground="#7C2D12" />
+              </StackPanel>
+            </Border>
+
+            <StackPanel Spacing="8">
+              <TextBlock Text="{Binding BatteryText}" FontWeight="SemiBold" TextWrapping="Wrap" />
+              <TextBlock Text="{Binding LimitText}" FontWeight="SemiBold" TextWrapping="Wrap" />
+              <TextBlock Text="{Binding BackendText}" Foreground="#475569" TextWrapping="Wrap" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <Button Classes="primary"
+                      Content="Set 80% limit"
+                      Command="{Binding ApplyEightyCommand}"
+                      IsEnabled="{Binding CanMutate}" />
+              <Button Classes="secondary"
+                      Content="Restore full charge"
+                      Command="{Binding RestoreFullCommand}"
+                      IsEnabled="{Binding CanMutate}" />
+              <Button Classes="secondary"
+                      Content="Refresh"
+                      Command="{Binding RefreshCommand}" />
+            </StackPanel>
+
+            <TextBlock IsVisible="{Binding IsBusy}"
+                       Text="Applying change…"
+                       Foreground="#0F766E"
+                       FontWeight="SemiBold" />
+
+            <Border IsVisible="{Binding HasActionMessage}"
+                    Background="#F1F5F9"
+                    CornerRadius="8"
+                    Padding="12">
+              <StackPanel Spacing="4">
+                <TextBlock Text="Done"
+                           IsVisible="{Binding ActionSucceeded}"
+                           FontWeight="SemiBold"
+                           Foreground="#047857" />
+                <TextBlock Text="Could not apply change"
+                           IsVisible="{Binding !ActionSucceeded}"
+                           FontWeight="SemiBold"
+                           Foreground="#B91C1C" />
+                <TextBlock Text="{Binding ActionMessage}"
+                           TextWrapping="Wrap"
+                           Foreground="#0F172A" />
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="card" IsVisible="{Binding !IsLoading}">
+          <StackPanel Spacing="8">
+            <TextBlock Text="Backend probes" FontWeight="SemiBold" FontSize="16" />
+            <ItemsControl ItemsSource="{Binding ProbeLines}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                  <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,0,0,6" Foreground="#334155" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="No backends reported yet. Refresh after installing Dell tools."
+                       Foreground="#64748B"
+                       FontSize="12" />
+          </StackPanel>
+        </Border>
+
+        <TextBlock Text="{Binding PlatformNote}"
+                   TextWrapping="Wrap"
+                   Foreground="#64748B"
+                   FontSize="12"
+                   Margin="4,0,4,12" />
+      </StackPanel>
+    </ScrollViewer>
+  </Panel>
+</Window>
